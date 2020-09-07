@@ -53,7 +53,7 @@ To run the web app:
   
 ## Results  
   
-This project includes a web app to classify new disaster messages. First, when you navigate to http://localhost:3001/, the web app displays from visualizations about the data used to train the classification model.   
+This project includes a web app to classify new disaster messages. First, when you navigate to http://localhost:3001/, the web app displays some visualizations about the data used to train the classification model.   
 ![Data Visualizations](https://github.com/janniec/DisasterResponsePipeline/blob/master/images/disaster-response-project1.png)   
   
 In addition, the web app has an interface to input new disaster messages for classification.   
