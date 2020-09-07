@@ -1,35 +1,39 @@
-# You'll just have to modify the file paths to your database and pickled model file as needed.
-# create two additional data visualizations in your web app based on data you extract from the SQLite database.
-
 import json
 import plotly
 import pandas as pd
 
-from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
+from nltk.stem import WordNetLemmatizer
+from nltk.corpus import stopwords
 
 from flask import Flask
 from flask import render_template, request, jsonify
 from plotly.graph_objs import Bar
 from sklearn.externals import joblib
+# import joblib
 from sqlalchemy import create_engine
 
 
 app = Flask(__name__)
 
 def tokenize(text):
-    tokens = word_tokenize(text)
-    lemmatizer = WordNetLemmatizer()
-
-    clean_tokens = []
-    for tok in tokens:
-        clean_tok = lemmatizer.lemmatize(tok).lower().strip()
-        clean_tokens.append(clean_tok)
-
-    return clean_tokens
+    '''
+    text [string] = sentence text
+    Function to lowercase, tokenize, remove punctuations and stopwords, and lemmatize any string.
+    lemmas [list of strings] = list of lemmas
+    '''
+    #normalize text
+    text = re.sub(r'[^a-zA-Z0-9]',' ',text.lower())
+    #tokenize messages
+    words = word_tokenize(text)
+    # remove stopwords
+    tokens = [w for w in words if w not in stopwords.words("english")]
+    # Lemmatization
+    lemmas = [WordNetLemmatizer().lemmatize(t) for t in tokens]
+    return lemmas
 
 # load data
-engine = create_engine('sqlite:///../data/DisasterRespo.db')
+engine = create_engine('sqlite:///../data/DisasterResponse.db')
 df = pd.read_sql_table('Disasters', engine)
 
 # load model
@@ -42,13 +46,34 @@ model = joblib.load("../models/classifier.pkl")
 def index():
     
     # extract data needed for visuals
-    # TODO: Below is an example - modify to extract data for your own visuals
+    labels = df.iloc[:,4:].reindex(sorted(df.iloc[:,4:].columns), axis=1)
+    label_counts = labels.sum()
+    label_names = list(label_counts.index)
+    
     genre_counts = df.groupby('genre').count()['message']
     genre_names = list(genre_counts.index)
     
+    
     # create visuals
-    # TODO: Below is an example - modify to create your own visuals
     graphs = [
+        {
+            'data': [
+                Bar(
+                    x=label_names,
+                    y=label_counts
+                )
+            ],
+
+            'layout': {
+                'title': 'Distribution of Classification Labels',
+                'yaxis': {
+                    'title': "Count"
+                },
+                'xaxis': {
+                    'title': "Labels"
+                }
+            }
+        },
         {
             'data': [
                 Bar(
