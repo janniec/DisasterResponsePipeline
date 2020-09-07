@@ -1,3 +1,6 @@
+# You'll just have to modify the file paths to your database and pickled model file as needed.
+# create two additional data visualizations in your web app based on data you extract from the SQLite database.
+
 import json
 import plotly
 import pandas as pd
@@ -26,11 +29,11 @@ def tokenize(text):
     return clean_tokens
 
 # load data
-engine = create_engine('sqlite:///../data/YourDatabaseName.db')
-df = pd.read_sql_table('YourTableName', engine)
+engine = create_engine('sqlite:///../data/DisasterRespo.db')
+df = pd.read_sql_table('Disasters', engine)
 
 # load model
-model = joblib.load("../models/your_model_name.pkl")
+model = joblib.load("../models/classifier.pkl")
 
 
 # index webpage displays cool visuals and receives user input text for model
